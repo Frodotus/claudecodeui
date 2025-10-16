@@ -31,6 +31,7 @@ import { MicButton } from './MicButton.jsx';
 import { api, authenticatedFetch } from '../utils/api';
 import Fuse from 'fuse.js';
 import CommandMenu from './CommandMenu';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 
 // Helper function to decode HTML entities in text
@@ -1206,7 +1207,7 @@ function ChatInterface({ selectedProject, selectedSession, ws, sendMessage, mess
   const [totalMessages, setTotalMessages] = useState(0);
   const MESSAGES_PER_PAGE = 20;
   const [isSystemSessionChange, setIsSystemSessionChange] = useState(false);
-  const [permissionMode, setPermissionMode] = useState('default');
+  const [permissionMode, setPermissionMode] = useLocalStorage('permissionMode', 'default');
   const [attachedImages, setAttachedImages] = useState([]);
   const [uploadingImages, setUploadingImages] = useState(new Map());
   const [imageErrors, setImageErrors] = useState(new Map());
