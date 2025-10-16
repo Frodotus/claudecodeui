@@ -1521,26 +1521,17 @@ function ChatInterface({ selectedProject, selectedSession, ws, sendMessage, mess
         }]);
         break;
 
-      case 'cost':
-        // Show cost information
+      case 'cost': {
         const costMessage = `**Token Usage**: ${data.tokenUsage.used.toLocaleString()} / ${data.tokenUsage.total.toLocaleString()} (${data.tokenUsage.percentage}%)\n\n**Estimated Cost**:\n- Input: $${data.cost.input}\n- Output: $${data.cost.output}\n- **Total**: $${data.cost.total}\n\n**Model**: ${data.model}`;
-        setChatMessages(prev => [...prev, {
-          role: 'assistant',
-          content: costMessage,
-          timestamp: Date.now()
-        }]);
+        setChatMessages(prev => [...prev, { role: 'assistant', content: costMessage, timestamp: Date.now() }]);
         break;
+      }
 
-      case 'status':
-        // Show status information
+      case 'status': {
         const statusMessage = `**System Status**\n\n- Version: ${data.version}\n- Uptime: ${data.uptime}\n- Model: ${data.model}\n- Provider: ${data.provider}\n- Node.js: ${data.nodeVersion}\n- Platform: ${data.platform}`;
-        setChatMessages(prev => [...prev, {
-          role: 'assistant',
-          content: statusMessage,
-          timestamp: Date.now()
-        }]);
+        setChatMessages(prev => [...prev, { role: 'assistant', content: statusMessage, timestamp: Date.now() }]);
         break;
-
+      }
       case 'memory':
         // Show memory file info
         if (data.error) {
@@ -2814,7 +2805,7 @@ function ChatInterface({ selectedProject, selectedSession, ws, sendMessage, mess
           }
           break;
           
-        case 'session-aborted':
+        case 'session-aborted': {
           // Get session ID from message or fall back to current session
           const abortedSessionId = latestMessage.sessionId || currentSessionId;
 
@@ -2841,9 +2832,9 @@ function ChatInterface({ selectedProject, selectedSession, ws, sendMessage, mess
             timestamp: new Date()
           }]);
           break;
+        }
 
-        case 'session-status':
-          // Response to check-session-status request
+        case 'session-status': {
           const statusSessionId = latestMessage.sessionId;
           const isCurrentSession = statusSessionId === currentSessionId ||
                                    (selectedSession && statusSessionId === selectedSession.id);
@@ -2856,6 +2847,7 @@ function ChatInterface({ selectedProject, selectedSession, ws, sendMessage, mess
             }
           }
           break;
+        }
 
         case 'claude-status':
           // Handle Claude working status messages
@@ -3405,21 +3397,18 @@ function ChatInterface({ selectedProject, selectedSession, ws, sendMessage, mess
   const selectCommand = (command) => {
     if (!command) return;
 
-    // Track command usage
-    handleCommandSelect(command);
-
+    // Insert command into input (execution happens when user sends the message)
     const textBeforeSlash = input.slice(0, slashPosition);
     const textAfterSlash = input.slice(slashPosition);
     const spaceIndex = textAfterSlash.indexOf(' ');
     const textAfterQuery = spaceIndex !== -1 ? textAfterSlash.slice(spaceIndex) : '';
 
-    const newInput = textBeforeSlash + '/' + command.name + ' ' + textAfterQuery;
-    const newCursorPos = textBeforeSlash.length + 1 + command.name.length + 1;
+    const newInput = textBeforeSlash + command.name + ' ' + textAfterQuery;
+    const newCursorPos = textBeforeSlash.length + command.name.length + 1;
 
     // Update input and cursor position
     setInput(newInput);
     setCursorPosition(newCursorPos);
-
     // Hide command menu
     setShowCommandMenu(false);
     setSlashPosition(-1);
